@@ -120,18 +120,11 @@ public class ValueShell {
    * @throws IllegalFormatException If the value is not of type string
    */
   public Path getValueAsPath() throws IllegalFormatException {
-    if (determineTrueType() != Type.PATH) {
-      throw new IllegalStateException("Value is not of type string which is a requirement for the file type.");
-    }
     File file = new File(value);
     try {
-      if (file.exists()) {
-        return file.toPath();
-      } else {
-        throw new IllegalStateException("Path does not exist.");
-      }
-    } catch (SecurityException | InvalidPathException e) {
-      throw new IllegalStateException("Path can not be read (missing rights) or parsed correctly.");
+      return file.toPath();
+    } catch (InvalidPathException e) {
+      throw new IllegalStateException("Path can not be read from the value.");
     }
   }
 
