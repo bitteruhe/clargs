@@ -51,23 +51,23 @@ public class ArgsParserTest {
               Intermediate.SPACE));
     }
 
-    String[] leftArrowArgs = { "-a<-true", "--before<-ok", "--call<-456", "-D<-45.6", "-efghijklmnop<-false" };
+    String[] leftArrowArgs = { "-a~true", "--before~ok", "--call~456", "-D~45.6", "-efghijklmnop~false" };
     testObjects.add(new Shell(new ValueShell(Type.BOOLEAN, "true"),
             new ArgRule('a', "all", Type.BOOLEAN, "Foo all", false), leftArrowArgs,
-            Intermediate.LEFT_ARROW));
+            Intermediate.TILDE));
     testObjects.add(new Shell(new ValueShell(Type.STRING, "ok"),
             new ArgRule('b', "before", Type.STRING, "Before foo", true), leftArrowArgs,
-            Intermediate.LEFT_ARROW));
+            Intermediate.TILDE));
     testObjects.add(new Shell(new ValueShell(Type.INT, "456"),
             new ArgRule('c', "call", Type.INT, "Call foo", false), leftArrowArgs,
-            Intermediate.LEFT_ARROW));
+            Intermediate.TILDE));
     testObjects.add(new Shell(new ValueShell(Type.DOUBLE, "45.6"),
             new ArgRule('D', "do", Type.DOUBLE, "Do foo", false), leftArrowArgs,
-            Intermediate.LEFT_ARROW));
+            Intermediate.TILDE));
     for (char c = 'e'; c <= 'p'; c++) {
       testObjects.add(new Shell(new ValueShell(Type.BOOLEAN, "false"),
               new ArgRule(c, "lllllllllllllllll" + c, Type.BOOLEAN, "foo foo", false), leftArrowArgs,
-              Intermediate.LEFT_ARROW));
+              Intermediate.TILDE));
     }
   }
 
@@ -77,7 +77,7 @@ public class ArgsParserTest {
     for (Shell testObject : testObjects) {
       ArgsParser.parse(testObject.argRule, testObject.args, testObject.intermediate);
       Assert.assertEquals("Value shells are not equal for arg letter " + testObject.argRule.getLetter(),
-              testObject.valueShell, testObject.argRule.getValue());
+              testObject.valueShell, testObject.argRule.getValue().get());
     }
   }
 }

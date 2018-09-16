@@ -1,24 +1,17 @@
 package org.bitteruhe;
 
+import org.bitteruhe.enums.Type;
 import org.bitteruhe.util.Validate;
 
 import java.util.Map;
 
 public class ClargsResult {
 
-  private boolean requiredArgsCovered;
-
   private Map<Character, ArgRule> specifiedRules;
 
-  ClargsResult(boolean requiredArgsCovered, Map<Character, ArgRule> specifiedRules) {
-    this.requiredArgsCovered = requiredArgsCovered;
+  ClargsResult(Map<Character, ArgRule> specifiedRules) {
     Validate.isNotNull(specifiedRules);
     this.specifiedRules = Validate.isNotNull(specifiedRules);
-
-  }
-
-  public boolean isRequiredArgsCovered() {
-    return requiredArgsCovered;
   }
 
   /**
@@ -28,7 +21,14 @@ public class ClargsResult {
    */
   public boolean areTypesCorrect() {
     for (ArgRule specifiedRule : specifiedRules.values()) {
-      if (!specifiedRule.getValue().determineTrueType().equals(specifiedRule.getValue().getExpectedType())) {
+      if (specifiedRule.getType().equals(Type.NONE)) {
+        return !specifiedRule.getValue().isPresent();
+      }
+      if (specifiedRule.getValue().isPresent()) {
+        if (!specifiedRule.getValue().get().determineTrueType().equals(specifiedRule.getType())) {
+          return false;
+        }
+      } else {
         return false;
       }
     }

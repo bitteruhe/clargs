@@ -3,6 +3,8 @@ package org.bitteruhe;
 import org.bitteruhe.enums.Type;
 import org.bitteruhe.util.Validate;
 
+import java.util.Optional;
+
 public class ArgRule {
   private char letter;
 
@@ -72,10 +74,12 @@ public class ArgRule {
   }
 
   /**
-   * @return the specified value. Null if none was specified.
+   * @return the specified value wrapped in an Optional. The optional is empty if no value was specified.
    */
-  public ValueShell getValue() {
-    return value;
+  public Optional<ValueShell> getValue() {
+    if (value != null)
+      return Optional.of(value);
+    return Optional.empty();
   }
 
   /**

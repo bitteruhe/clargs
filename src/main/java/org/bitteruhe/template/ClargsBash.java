@@ -5,6 +5,8 @@ import org.bitteruhe.Clargs;
 import org.bitteruhe.ClargsResult;
 import org.bitteruhe.enums.Intermediate;
 import org.bitteruhe.enums.Type;
+import org.bitteruhe.except.InvalidSyntaxException;
+import org.bitteruhe.except.MissingArgumentException;
 
 import java.io.PrintStream;
 
@@ -14,6 +16,14 @@ public class ClargsBash extends Clargs {
   public ClargsBash(PrintStream out, Intermediate intermediate) {
     super(out, intermediate);
     addRules();
+  }
+
+  public ClargsBash(Intermediate intermediate) {
+    this(System.out, intermediate);
+  }
+
+  public ClargsBash() {
+    this(System.out, Intermediate.SPACE);
   }
 
   private void addRules() {
@@ -29,7 +39,7 @@ public class ClargsBash extends Clargs {
   }
 
   @Override
-  public ClargsResult processArgs(String[] args) throws IllegalArgumentException {
+  public ClargsResult processArgs(String[] args) throws MissingArgumentException, InvalidSyntaxException {
     ClargsResult clargsResult = super.processArgs(args);
     if (helpRule.isSpecified() || clargsResult.getRules().size() == 0) {
       super.helpDisplay.printHelp(super.argRules.values());

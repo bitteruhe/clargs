@@ -1,6 +1,8 @@
 package org.bitteruhe;
 
 import org.bitteruhe.enums.Intermediate;
+import org.bitteruhe.except.InvalidSyntaxException;
+import org.bitteruhe.except.MissingArgumentException;
 import org.bitteruhe.util.Validate;
 
 import java.io.PrintStream;
@@ -33,7 +35,7 @@ public class Clargs {
 
   /**
    * A clargs instance for parsing cl arguments
-   * Intermediate: SPACE
+   * Default Intermediate: SPACE (' ')
    */
   public Clargs() {
     this(System.out, Intermediate.SPACE);
@@ -47,30 +49,29 @@ public class Clargs {
    * @return A list of specified arg rules
    * @throws IllegalArgumentException if the arguments do not meet the syntax rules.
    */
-  public ClargsResult processArgs(String[] args) throws IllegalArgumentException {
+  public ClargsResult processArgs(String[] args) throws MissingArgumentException, InvalidSyntaxException {
     Validate.isValidArgs(args);
-
-    boolean requiredArgsCovered = true;
     Map<Character, ArgRule> specifiedArgRules = new HashMap<>(); // All specified rules are added to this list
     for (ArgRule argRule : argRules.values()) {
       boolean isSyntaxCorrect = ArgsParser.parse(argRule, args, intermediate); // The real parsing happens here
-      if (!isSyntaxCorrect) {
+      if (!isSyntaxCorrect) { // Handle the case that the syntax is incorrect
         this.helpDisplay.handleWrongSyntax(this.argRules.values());
-        throw new IllegalArgumentException("Arguments have a wrong syntax");
+        throw new InvalidSyntaxException();
       }
-      if (!argRule.isSpecified() && !argRule.isOptional()) {
+      if (!argRule.isSpecified() && !argRule.isOptional()) { // Handle the case that a required argument is missing
         this.helpDisplay.handleMissingRule(argRule);
-        requiredArgsCovered = false; // A required arg is missing.
+        throw new MissingArgumentException();
       }
       if (argRule.isSpecified()) {
         specifiedArgRules.put(argRule.getLetter(), argRule);
       }
     }
-    return new ClargsResult(requiredArgsCovered, specifiedArgRules);
+    return new ClargsResult(specifiedArgRules);
   }
 
   /**
-   * Add an arg rule that is expected to be present.
+   * Add an arg rule.
+   * Clargs will parse the args and search according to that rule
    *
    * @param argRule The rule to add
    */

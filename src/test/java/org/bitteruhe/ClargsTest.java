@@ -2,6 +2,8 @@ package org.bitteruhe;
 
 import org.bitteruhe.enums.Intermediate;
 import org.bitteruhe.enums.Type;
+import org.bitteruhe.except.InvalidSyntaxException;
+import org.bitteruhe.except.MissingArgumentException;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -57,8 +59,16 @@ public class ClargsTest {
     for (ArgRule optionalRule : optionalRules.keySet()) {
       clargs.addArgRule(optionalRule);
     }
-    ClargsResult result = clargs.processArgs(args);
+    ClargsResult result = null;
+    try {
+      result = clargs.processArgs(args);
+    } catch (MissingArgumentException e) {
+      e.printStackTrace();
+      Assert.fail("Falsely detected missing arguments");
+    } catch (InvalidSyntaxException e) {
+      e.printStackTrace();
+      Assert.fail("Falsely detected incorrect syntax");
+    }
     Assert.assertTrue("Types must be double, but are incorrect", result.areTypesCorrect());
-    Assert.assertTrue("Required args are missing", result.isRequiredArgsCovered());
   }
 }
