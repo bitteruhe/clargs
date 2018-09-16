@@ -29,34 +29,46 @@ The following arguments will be parsed by clargs:
 ```
 This example class handles the parsing:
 ```java
-class Example{
-  public static void main(String[] args){
+import org.bitteruhe.enums.Type;
+import org.bitteruhe.except.InvalidSyntaxException;
+import org.bitteruhe.except.MissingArgumentException;
+
+import java.nio.file.Path;
+
+class Example {
+  public static void main(String[] args) {
     Clargs clargs = new Clargs();
-    clargs.addRule( // By adding argRules, clarg knows which flags are to be parsed
-                new ArgRule('o',           // clarg looks for '-o'
-                            "output-file", // as well as for '--output-file'
-                            Type.PATH,     // and expects a valid path to be passed as argument
-                            "The output file to store foo in", // clarg shows this description
-                                                               // in case that help is required
-                            false)         // This flag is not optional
-        );
-    clargs.addRule(
-                new ArgRule('n',
-                            "number",
-                            Type.INT,
-                            "The number of lines to foo bar",
-                            true) // Argument is optional
-        );
-    ClargsResult result = clargs.processArgs(args); // Clarg stores the processed args in a ClargsResult
-    if(result.isRequiredArgsCovered() && result.areTypesCorrect()){ 
-      Path path = result.getRules.get('o').getValue().getValueAsPath(); // path = ./test.txt
-      int number = result.getRules.get('n').getValue().getValueAsInt(); // number = 100
+    clargs.addArgRule( // By adding argRules, clarg knows which flags are to be parsed
+            new ArgRule('o',           // clarg looks for '-o'
+                    "output-file", // as well as for '--output-file'
+                    Type.PATH,     // and expects a valid path to be passed as argument
+                    "The output file to store foo in", // clarg shows this description
+                    // in case that help is required
+                    false)         // This flag is not optional
+    );
+    clargs.addArgRule(
+            new ArgRule('n',
+                    "number",
+                    Type.INT,
+                    "The number of lines to foo bar",
+                    true) // Argument is optional
+    );
+    ClargsResult result = null; // Clarg stores the processed args in a ClargsResult
+    try {
+      result = clargs.processArgs(args);
+    } catch (MissingArgumentException | InvalidSyntaxException e) {
+      return;
+    }
+    if (result.areTypesCorrect()) {
+      Path path = result.getRules().get('o').getValue().get().getValueAsPath(); // path = ./test.txt
+      int number = result.getRules().get('n').getValue().get().getValueAsInt(); // number = 100
       // Go on
     } else {
       // Stop immediately
     }
   }
 }
+
 ```
 
 ## Templates

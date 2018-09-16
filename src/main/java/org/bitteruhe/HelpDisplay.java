@@ -32,7 +32,7 @@ public class HelpDisplay {
   }
 
   public void handleMissingRule(ArgRule argRule) {
-    out.print("This rule is required: ");
+    out.print("This rule is required:\n  ");
     out.println(argRule);
   }
 

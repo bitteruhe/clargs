@@ -98,7 +98,7 @@ public class ArgRule {
 
   @Override
   public String toString() {
-    return (optional ? "[" : "") + "-" + letter + ", --" + flag + (optional ? "]" : "") +
+    return (optional ? "[" : "") + "-" + letter + ", --" + flag + (optional ? "]" : "") + " " +
             (type.equals(Type.NONE) ? "" : type) +
             "\n" +
             "      " + description;

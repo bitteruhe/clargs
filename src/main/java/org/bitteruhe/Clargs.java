@@ -51,6 +51,16 @@ public class Clargs {
    */
   public ClargsResult processArgs(String[] args) throws MissingArgumentException, InvalidSyntaxException {
     Validate.isValidArgs(args);
+
+    if (args.length == 0) {
+      this.helpDisplay.printHelp(argRules.values());
+      for (ArgRule argRule : argRules.values()) {
+        if (!argRule.isOptional()) {
+          throw new MissingArgumentException();
+        }
+      }
+    }
+
     Map<Character, ArgRule> specifiedArgRules = new HashMap<>(); // All specified rules are added to this list
     for (ArgRule argRule : argRules.values()) {
       boolean isSyntaxCorrect = ArgsParser.parse(argRule, args, intermediate); // The real parsing happens here
@@ -80,5 +90,12 @@ public class Clargs {
     Validate.containsValueNot(argRules, argRule);
 
     argRules.put(argRule.getLetter(), argRule);
+  }
+
+  /**
+   * Prints help for the specified rules
+   */
+  public void printHelp() {
+    this.helpDisplay.printHelp(this.argRules.values());
   }
 }
